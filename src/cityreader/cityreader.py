@@ -33,12 +33,14 @@ def cityreader(cities=[]):
   # For each city record, create a new City instance and add it to the
   # `cities` list
     with open('cities.csv') as c:
+        if csv.Sniffer().has_header(c.read()):
+            c.seek(0)
+            header = c.readline()
         reader = csv.reader(c)
         # Check for csv header; store and skip it if necessary
-        if csv.Sniffer().has_header(c.read()):
-            header = c.readline()
+
         for row in reader:
-            cities.append(City(row[0], row[3], row[4]))
+            cities.append(City(row[0], float(row[3]), float(row[4])))
     return cities
 
 
@@ -78,14 +80,29 @@ for c in cities:
 # Salt Lake City: (40.7774,-111.9301)
 
 # TODO Get latitude and longitude values from the user
+lat1, lon1 = input(
+    "Please enter latitude and longitude, separated by a comma: ").split(',')
+
+lat2, lon2 = input(
+    "Please enter a second latitude and longitude, separated by a comma: ").split(',')
 
 
 def cityreader_stretch(lat1, lon1, lat2, lon2, cities=[]):
   # within will hold the cities that fall within the specified region
     within = []
 
-    # TODO Ensure that the lat and lon valuse are all floats
+    # TODO Ensure that the lat and lon values are all floats
     # Go through each city and check to see if it falls within
     # the specified coordinates.
+    north = float(max(lat1, lat2))
+    south = float(min(lat1, lat2))
+    east = float(min(lon1, lon2))
+    west = float(max(lon1, lon2))
 
+    for city in cities:
+        if east < city.lon < west and south < city.lat < north:
+            within.append(city)
     return within
+
+
+print(cityreader_stretch(lat1, lon1, lat2, lon2, cities))
